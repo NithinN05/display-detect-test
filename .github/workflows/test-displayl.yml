@@ -18,10 +18,13 @@ jobs:
         run: |
           if [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ]; then
             echo "Display: YES"
+            # Try counting connected displays
+            count=$(xrandr --listmonitors 2>/dev/null | tail -n +2 | wc -l)
+            echo "Display Count: ${count:-1}"
           else
             echo "Display: NO"
+            echo "Display Count: 0"
           fi
-          echo "Count: $count"
 
   check-display-windows:
     name: Windows Display Check
@@ -33,13 +36,14 @@ jobs:
       - name: Check if display is available on Windows
         shell: powershell
         run: |
-          $monitorCount = (Get-WmiObject WmiMonitorID -Namespace root/wmi | Measure-Object).Count
-          if ($monitorCount -gt 0) {
+          if ($env:SESSIONNAME -eq "Console") {
             Write-Host "Display: YES"
+            $count = (Get-CimInstance Win32_DesktopMonitor | Where-Object { $_.Availability -ne $null }).Count
+            Write-Host "Display Count: $count"
           } else {
             Write-Host "Display: NO"
+            Write-Host "Display Count: 0"
           }
-          Write-Host "Count: $monitorCount"
 
   check-display-macos:
     name: macOS Display Check
@@ -53,7 +57,8 @@ jobs:
           count=$(system_profiler SPDisplaysDataType | grep "Resolution" | wc -l)
           if [ "$count" -gt 0 ]; then
             echo "Display: YES"
+            echo "Display Count: $count"
           else
             echo "Display: NO"
+            echo "Display Count: 0"
           fi
-          echo "Count: $count"
