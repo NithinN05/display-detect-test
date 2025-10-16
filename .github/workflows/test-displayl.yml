@@ -7,14 +7,48 @@ on:
   workflow_dispatch:
 
 jobs:
-  check-display:
-    runs-on: macos-latest
-
+  check-display-linux:
+    name: Linux Display Check
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Check if display is available
+      - name: Check if display is available on Linux
+        run: |
+          if [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ]; then
+            echo "Display: YES"
+          else
+            echo "Display: NO"
+          fi
+          echo "Count: $count"
+
+  check-display-windows:
+    name: Windows Display Check
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Check if display is available on Windows
+        shell: powershell
+        run: |
+          $monitorCount = (Get-WmiObject WmiMonitorID -Namespace root/wmi | Measure-Object).Count
+          if ($monitorCount -gt 0) {
+            Write-Host "Display: YES"
+          } else {
+            Write-Host "Display: NO"
+          }
+          Write-Host "Count: $monitorCount"
+
+  check-display-macos:
+    name: macOS Display Check
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Check if display is available on macOS
         run: |
           count=$(system_profiler SPDisplaysDataType | grep "Resolution" | wc -l)
           if [ "$count" -gt 0 ]; then
@@ -22,4 +56,4 @@ jobs:
           else
             echo "Display: NO"
           fi
-          echo "$count"
+          echo "Count: $count"
