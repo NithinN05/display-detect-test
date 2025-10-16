@@ -38,7 +38,7 @@ jobs:
         run: |
           if ($env:SESSIONNAME -eq "Console") {
             Write-Host "Display: YES"
-            $count = (Get-CimInstance Win32_DesktopMonitor | Where-Object { $_.Availability -ne $null }).Count
+            $count = (Get-WmiObject WmiMonitorID -Namespace root\wmi | Measure-Object).Count
             Write-Host "Display Count: $count"
           } else {
             Write-Host "Display: NO"
