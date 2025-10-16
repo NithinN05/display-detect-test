@@ -36,14 +36,15 @@ jobs:
       - name: Check if display is available on Windows
         shell: powershell
         run: |
-          if ($env:SESSIONNAME -eq "Console") {
-            Write-Host "Display: YES"
-            $count = (Get-WmiObject WmiMonitorID -Namespace root\wmi | Measure-Object).Count
-            Write-Host "Display Count: $count"
+          $count = (Get-WmiObject WmiMonitorID -Namespace root\wmi | Measure-Object).Count
+          if ($count -gt 0) {
+              Write-Host "Display: YES"
+              Write-Host "Display Count: $count"
           } else {
-            Write-Host "Display: NO"
-            Write-Host "Display Count: 0"
+              Write-Host "Display: NO"
+              Write-Host "Display Count: 0"
           }
+
 
   check-display-macos:
     name: macOS Display Check
