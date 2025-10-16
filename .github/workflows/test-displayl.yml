@@ -16,15 +16,15 @@ jobs:
 
       - name: Check if display is available on Linux
         run: |
-          if [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ]; then
-            echo "Display: YES"
-            # Try counting connected displays
-            count=$(xrandr --listmonitors 2>/dev/null | tail -n +2 | wc -l)
-            echo "Display Count: ${count:-1}"
+          count=$(xrandr --listmonitors 2>/dev/null | tail -n +2 | wc -l)
+          if [ "$count" -gt 0 ]; then
+              echo "Display: YES"
+              echo "Display Count: $count"
           else
-            echo "Display: NO"
-            echo "Display Count: 0"
+              echo "Display: NO"
+              echo "Display Count: 0"
           fi
+
 
   check-display-windows:
     name: Windows Display Check
