@@ -1,0 +1,25 @@
+name: Test Display
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  check-display:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Check if display is available
+        run: |
+          count=$(system_profiler SPDisplaysDataType | grep "Resolution" | wc -l)
+          if [ "$count" -gt 0 ]; then
+            echo "Display: YES"
+          else
+            echo "Display: NO"
+          fi
+          echo "$count"
