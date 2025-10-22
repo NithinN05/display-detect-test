@@ -44,7 +44,17 @@ jobs:
 
   check-display-macos:
     name: macOS Display Check
-    runs-on: macos-12
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: 
+          - macos-latest
+          - macos-26
+          - macos-16
+          - macos-15
+          - macos-15-intel
+          - macos-14
+          - macos-13
     steps: 
       - name: Checkout
         uses: actions/checkout@v3
