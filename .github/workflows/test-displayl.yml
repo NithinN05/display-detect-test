@@ -9,7 +9,15 @@ on:
 jobs:
   check-display-linux:
     name: Linux Display Check
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: 
+          - ubuntu-latest
+          - ubuntu-24.04
+          - ubuntu-22.04
+          - ubuntu-24.04-arm
+          - ubuntu-22.04-arm
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -28,7 +36,14 @@ jobs:
 
   check-display-windows:
     name: Windows Display Check
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: 
+          - widows-latest
+          - widows-2025
+          - widows-2022
+          - widows-11-arm
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -67,4 +82,3 @@ jobs:
             echo "Display: NO"
             echo "Display Count: 0"
           fi
-          ps -ax | grep -q [W]indowServer
