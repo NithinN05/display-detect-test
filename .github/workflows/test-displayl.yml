@@ -32,18 +32,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
-      - name: Check if display is available on Windows
+  
+      - name: Check active Windows displays
         shell: powershell
         run: |
-          if ($env:SESSIONNAME -eq "Console") {
-            Write-Host "Display: YES"
-            $count = (Get-WmiObject WmiMonitorID -Namespace root\wmi | Measure-Object).Count
-            Write-Host "Display Count: $count"
+          $monitors = Get-WmiObject WmiMonitorID -Namespace root\wmi
+          if ($monitors) {
+            $active = ($monitors | Where-Object { $_.Active -eq $true }).Count
+            Write-Host "Active Display Count: $active"
           } else {
-            Write-Host "Display: NO"
-            Write-Host "Display Count: 0"
+            Write-Host "No monitors detected"
           }
+
 
   check-display-macos:
     name: macOS Display Check
