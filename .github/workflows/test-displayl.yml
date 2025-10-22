@@ -68,3 +68,4 @@ jobs:
             echo "Display: NO"
             echo "Display Count: 0"
           fi
+          launchctl managername
