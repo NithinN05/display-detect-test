@@ -36,7 +36,7 @@ jobs:
       - name: Check active Windows displays
         shell: powershell
         run: |
-          $monitors = Get-WmiObject WmiMonitorID -Namespace root\wmi
+          $monitors = (Get-WmiObject WmiMonitorID -Namespace root\wmi).Active
           if ($monitors) {
             $active = ($monitors | Where-Object { $_.Active -eq $true }).Count
             Write-Host "Active Display Count: $active"
