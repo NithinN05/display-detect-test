@@ -37,7 +37,7 @@ jobs:
         shell: powershell
         run: |
           $monitors = (Get-WmiObject WmiMonitorID -Namespace root\wmi).Active
-          $active = Get-CimInstance -Namespace root\wmi | Measure-Object | Select-Object -ExpandProperty Count
+          $active = Get-WmiObject WmiMonitorID -Namespace root\wmi | Measure-Object | Select-Object -ExpandProperty Count
           Write-Host "Active Display Count: $active"
           (Get-WmiObject WmiMonitorID -Namespace root\wmi).Active
 
