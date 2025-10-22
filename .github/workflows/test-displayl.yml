@@ -37,12 +37,9 @@ jobs:
         shell: powershell
         run: |
           $monitors = (Get-WmiObject WmiMonitorID -Namespace root\wmi).Active
-          if ($monitors) {
-            $active = ($monitors | Where-Object { $_.Active -eq $true }).Count
-            Write-Host "Active Display Count: $active"
-          } else {
-            Write-Host "No monitors detected"
-          }
+          $active = ($monitors).Count
+          Write-Host "Active Display Count: $active"
+          (Get-WmiObject WmiMonitorID -Namespace root\wmi).Active
 
 
   check-display-macos:
