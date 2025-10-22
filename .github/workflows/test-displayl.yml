@@ -44,24 +44,17 @@ jobs:
 
   check-display-macos:
     name: macOS Display Check
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: 
-          - macos-13    # Ventura
-          - macos-12    # Monterey
-          - macos-11    # Big Sur
-    steps:
+    runs-on: macos-13
+    steps: 
       - name: Checkout
         uses: actions/checkout@v3
-
       - name: Check if display is available on macOS
-        run: |
+        run: | 
           count=$(system_profiler SPDisplaysDataType | grep "Resolution" | wc -l)
           if [ "$count" -gt 0 ]; then
             echo "Display: YES"
             echo "Display Count: $count"
-          else
+          else 
             echo "Display: NO"
             echo "Display Count: 0"
           fi
