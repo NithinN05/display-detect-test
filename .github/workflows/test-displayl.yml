@@ -44,7 +44,13 @@ jobs:
 
   check-display-macos:
     name: macOS Display Check
-    runs-on: macos-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: 
+          - macos-13    # Ventura
+          - macos-12    # Monterey
+          - macos-11    # Big Sur
     steps:
       - name: Checkout
         uses: actions/checkout@v3
