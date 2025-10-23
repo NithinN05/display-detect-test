@@ -66,8 +66,7 @@ jobs:
           } else {
             Write-Host "No display (headless only)"
           }
-
-          
+          Get-WmiObject WmiMonitorID -Namespace root\wmi
 
   check-display-macos:
     name: macOS Display Check
@@ -86,27 +85,9 @@ jobs:
         uses: actions/checkout@v3
       - name: Check if display is available on macOS
         run: | 
-          # count=$(system_profiler SPDisplaysDataType | grep "Resolution" | wc -l)
-          # if [ "$count" -gt 0 ]; then
-          #   echo "Display: YES"
-          #   echo "Display Count: $count"
-          # else 
-          #   echo "Display: NO"
-          #   echo "Display Count: 0"
-          # fi
-          # pgrep -qx loginwindow && echo "GUI session is active." || echo "GUI session is not active."
           count=$(system_profiler SPDisplaysDataType | grep "Resolution" | wc -l)
           if [ "$count" -gt 0 ]; then
             echo "Display available"
           else
             echo "No display (headless only)"
           fi
-          if [ -n "$DISPLAY" ]; then
-            echo "Display available"
-          else
-            echo "No display"
-          fi
-          system_profiler SPDisplaysDataType
-
-
-          
