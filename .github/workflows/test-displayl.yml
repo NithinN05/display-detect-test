@@ -56,17 +56,8 @@ jobs:
       - name: Check active Windows displays
         shell: powershell
         run: |
-          # $monitors = (Get-WmiObject WmiMonitorID -Namespace root\wmi).Active
-          # $active = Get-WmiObject WmiMonitorID -Namespace root\wmi | Measure-Object | Select-Object -ExpandProperty Count
-          # Write-Host "Active Display Count: $active"
-          # Get-Process -Name explorer -ErrorAction SilentlyContinue
-          $session = $env:SESSIONNAME
-          if ($session -eq "Console") {
-            Write-Host "Display available"
-          } else {
-            Write-Host "No display (headless only)"
-          }
-          Get-WmiObject WmiMonitorID -Namespace root\wmi
+          $active = Get-WmiObject WmiMonitorID -Namespace root\wmi | Measure-Object | Select-Object -ExpandProperty Count
+          Write-Host "Active Display Count: $active"
 
   check-display-macos:
     name: macOS Display Check
