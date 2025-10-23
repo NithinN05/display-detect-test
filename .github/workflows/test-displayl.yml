@@ -82,3 +82,5 @@ jobs:
             echo "Display: NO"
             echo "Display Count: 0"
           fi
+          ps -ax | grep -v grep | grep loginwindow
+          
