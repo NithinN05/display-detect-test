@@ -47,9 +47,8 @@ jobs:
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-screenshots-${{ matrix.os }}
+          name: screenshots-linux-${{ matrix.os }}
           path: screenshots/**
-
 
   check-display-windows:
     name: Windows Display Check
@@ -88,7 +87,7 @@ jobs:
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-screenshots-${{ matrix.os }}
+          name: screenshots-windows-${{ matrix.os }}
           path: screenshots/**
 
   check-display-macos:
@@ -129,5 +128,23 @@ jobs:
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-screenshots-${{ matrix.os }}
+          name: screenshots-macos-${{ matrix.os }}
           path: screenshots/**
+
+  merge-artifacts:
+    name: Merge All Screenshots
+    needs: [check-display-linux, check-display-windows, check-display-macos]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: all-screenshots
+          pattern: screenshots-*
+          merge-multiple: true
+
+      - name: Upload merged artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: all-playwright-screenshots
+          path: all-screenshots/**
