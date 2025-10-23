@@ -44,6 +44,12 @@ jobs:
       - name: Run Playwright tests in headed mode
         run: npx playwright test --headed
 
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-screenshots
+          path: screenshots/linux/${{ matrix.os }}
+
   check-display-windows:
     name: Windows Display Check
     runs-on: ${{ matrix.os }}
@@ -77,6 +83,12 @@ jobs:
 
       - name: Run Playwright tests in headed mode
         run: npx playwright test --headed
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-screenshots
+          path: screenshots/windows/${{ matrix.os }}
 
   check-display-macos:
     name: macOS Display Check
@@ -112,4 +124,9 @@ jobs:
 
       - name: Run Playwright tests in headed mode
         run: npx playwright test --headed
-        
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-screenshots
+          path: screenshots/macos/${{ matrix.os }}
