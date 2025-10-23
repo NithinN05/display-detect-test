@@ -48,20 +48,11 @@ jobs:
         continue-on-error: true
         run: xvfb-run npx playwright test --headed
 
-      - name: Organize screenshots by OS
-        if: always()
-        run: |
-          mkdir -p artifacts/linux/${{ matrix.os }}
-          if [ -d "screenshots" ]; then
-            cp -r screenshots/* artifacts/linux/${{ matrix.os }}/ || echo "No screenshots to copy"
-          fi
-
       - name: Upload screenshots
-        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: screenshots-linux-${{ matrix.os }}
-          path: artifacts/linux/${{ matrix.os }}/**
+          path: screenshots/**
           if-no-files-found: warn
 
   check-display-windows:
@@ -102,18 +93,11 @@ jobs:
         continue-on-error: true
         run: npx playwright test --headed
 
-      - name: Organize screenshots by OS
-        if: always()
-        run: |
-          mkdir -p artifacts/windows/${{ matrix.os }}
-          if (Test-Path "screenshots") { Copy-Item -Recurse -Force screenshots/* artifacts/windows/${{ matrix.os }}/ }
-
       - name: Upload screenshots
-        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: screenshots-windows-${{ matrix.os }}
-          path: artifacts/windows/${{ matrix.os }}/**
+          path: screenshots/**
           if-no-files-found: warn
 
   check-display-macos:
@@ -155,26 +139,16 @@ jobs:
         continue-on-error: true
         run: npx playwright test --headed
 
-      - name: Organize screenshots by OS
-        if: always()
-        run: |
-          mkdir -p artifacts/macos/${{ matrix.os }}
-          if [ -d "screenshots" ]; then
-            cp -r screenshots/* artifacts/macos/${{ matrix.os }}/ || echo "No screenshots to copy"
-          fi
-
       - name: Upload screenshots
-        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: screenshots-macos-${{ matrix.os }}
-          path: artifacts/macos/${{ matrix.os }}/**
+          path: screenshots/**
           if-no-files-found: warn
 
   merge-artifacts:
     name: Merge All Screenshots
     needs: [check-display-linux, check-display-windows, check-display-macos]
-    if: always()
     runs-on: ubuntu-latest
     steps:
       - name: Download all artifacts
