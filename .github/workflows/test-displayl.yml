@@ -24,20 +24,11 @@ jobs:
 
       - name: Check if display is available on Linux
         run: |
-          # count=$(xrandr --listmonitors 2>/dev/null | tail -n +2 | wc -l)
-          # if [ "$count" -gt 0 ]; then
-          #     echo "Display: YES"
-          #     echo "Display Count: $count"
-          # else
-          #     echo "Display: NO"
-          #     echo "Display Count: 0"
-          # fi
           if [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ]; then
             echo "Display available"
           else
-            echo "No display (headless only)"
+            echo "No display"
           fi
-          xset q > /dev/null 2>&1 && echo "Display OK" || echo "No display"
 
   check-display-windows:
     name: Windows Display Check
@@ -77,8 +68,4 @@ jobs:
       - name: Check if display is available on macOS
         run: | 
           count=$(system_profiler SPDisplaysDataType | grep "Resolution" | wc -l)
-          if [ "$count" -gt 0 ]; then
-            echo "Display available"
-          else
-            echo "No display (headless only)"
-          fi
+          echo "Active Display Count: $count"
