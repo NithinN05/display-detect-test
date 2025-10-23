@@ -54,8 +54,8 @@ jobs:
           $monitors = (Get-WmiObject WmiMonitorID -Namespace root\wmi).Active
           $active = Get-WmiObject WmiMonitorID -Namespace root\wmi | Measure-Object | Select-Object -ExpandProperty Count
           Write-Host "Active Display Count: $active"
-          (Get-WmiObject WmiMonitorID -Namespace root\wmi).Active
-
+          Get-Process -Name explorer -ErrorAction SilentlyContinue
+          
 
   check-display-macos:
     name: macOS Display Check
