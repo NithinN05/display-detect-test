@@ -19,8 +19,10 @@ jobs:
           - ubuntu-24.04-arm
           - ubuntu-22.04-arm
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
 
       - name: Check if display is available on Linux
         run: |
@@ -29,6 +31,25 @@ jobs:
           else
             echo "No display"
           fi
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright tests in headed mode
+        run: npx playwright test --headed
+
+      - name: Run Playwright tests in headless mode
+        run: npx playwright test
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
 
   check-display-windows:
     name: Windows Display Check
@@ -41,14 +62,35 @@ jobs:
           - windows-2022
           - windows-11-arm
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
   
       - name: Check active Windows displays
         shell: powershell
         run: |
           $active = Get-WmiObject WmiMonitorID -Namespace root\wmi | Measure-Object | Select-Object -ExpandProperty Count
           Write-Host "Active Display Count: $active"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright tests in headed mode
+        run: npx playwright test --headed
+
+      - name: Run Playwright tests in headless mode
+        run: npx playwright test
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
 
   check-display-macos:
     name: macOS Display Check
@@ -63,9 +105,31 @@ jobs:
           - macos-14
           - macos-13
     steps: 
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
       - name: Check if display is available on macOS
         run: | 
           count=$(system_profiler SPDisplaysDataType | grep "Resolution" | wc -l)
           echo "Active Display Count: $count"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright tests in headed mode
+        run: npx playwright test --headed
+
+      - name: Run Playwright tests in headless mode
+        run: npx playwright test
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
