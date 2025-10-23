@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: 
+        os:
           - ubuntu-latest
           - ubuntu-24.04
           - ubuntu-22.04
@@ -46,15 +46,23 @@ jobs:
 
       - name: Run Playwright tests in headed mode
         continue-on-error: true
-        run: npx playwright test --headed
+        run: xvfb-run npx playwright test --headed
+
+      - name: Organize screenshots by OS
+        if: always()
+        run: |
+          mkdir -p artifacts/linux/${{ matrix.os }}
+          if [ -d "screenshots" ]; then
+            cp -r screenshots/* artifacts/linux/${{ matrix.os }}/ || echo "No screenshots to copy"
+          fi
 
       - name: Upload screenshots
-        if: always()  # Upload even if previous steps failed
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: screenshots-linux-${{ matrix.os }}
-          path: screenshots/**
-          if-no-files-found: warn  # Don't fail if no screenshots exist
+          path: artifacts/linux/${{ matrix.os }}/**
+          if-no-files-found: warn
 
   check-display-windows:
     name: Windows Display Check
@@ -63,7 +71,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: 
+        os:
           - windows-latest
           - windows-2025
           - windows-2022
@@ -73,7 +81,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
-  
+
       - name: Check active Windows displays
         shell: powershell
         run: |
@@ -94,12 +102,18 @@ jobs:
         continue-on-error: true
         run: npx playwright test --headed
 
+      - name: Organize screenshots by OS
+        if: always()
+        run: |
+          mkdir -p artifacts/windows/${{ matrix.os }}
+          if (Test-Path "screenshots") { Copy-Item -Recurse -Force screenshots/* artifacts/windows/${{ matrix.os }}/ }
+
       - name: Upload screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: screenshots-windows-${{ matrix.os }}
-          path: screenshots/**
+          path: artifacts/windows/${{ matrix.os }}/**
           if-no-files-found: warn
 
   check-display-macos:
@@ -109,21 +123,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: 
+        os:
           - macos-latest
           - macos-26
           - macos-15
           - macos-15-intel
           - macos-14
           - macos-13
-    steps: 
+    steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
 
       - name: Check if display is available on macOS
-        run: | 
+        run: |
           count=$(system_profiler SPDisplaysDataType | grep "Resolution" | wc -l)
           echo "Active Display Count: $count"
 
@@ -141,12 +155,20 @@ jobs:
         continue-on-error: true
         run: npx playwright test --headed
 
+      - name: Organize screenshots by OS
+        if: always()
+        run: |
+          mkdir -p artifacts/macos/${{ matrix.os }}
+          if [ -d "screenshots" ]; then
+            cp -r screenshots/* artifacts/macos/${{ matrix.os }}/ || echo "No screenshots to copy"
+          fi
+
       - name: Upload screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: screenshots-macos-${{ matrix.os }}
-          path: screenshots/**
+          path: artifacts/macos/${{ matrix.os }}/**
           if-no-files-found: warn
 
   merge-artifacts:
@@ -168,18 +190,3 @@ jobs:
           name: all-playwright-screenshots
           path: all-screenshots/**
           if-no-files-found: warn
-
-      - name: Create summary
-        if: always()
-        run: |
-          echo "## Screenshot Collection Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Collected screenshots from all available jobs:" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          if [ -d "all-screenshots" ]; then
-            find all-screenshots -type f -name "*.png" | while read file; do
-              echo "- \`$file\`" >> $GITHUB_STEP_SUMMARY
-            done
-          else
-            echo "No screenshots found" >> $GITHUB_STEP_SUMMARY
-          fi
