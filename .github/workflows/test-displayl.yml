@@ -48,7 +48,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: playwright-screenshots
-          path: screenshots/linux/${{ matrix.os }}
+          path: screenshots/**
 
   check-display-windows:
     name: Windows Display Check
@@ -88,7 +88,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: playwright-screenshots
-          path: screenshots/windows/${{ matrix.os }}
+          path: screenshots/**
 
   check-display-macos:
     name: macOS Display Check
@@ -129,4 +129,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: playwright-screenshots
-          path: screenshots/macos/${{ matrix.os }}
+          path: screenshots/**
