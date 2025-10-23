@@ -47,8 +47,9 @@ jobs:
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-screenshots
+          name: playwright-screenshots-${{ runner.os }}
           path: screenshots/**
+
 
   check-display-windows:
     name: Windows Display Check
@@ -87,7 +88,7 @@ jobs:
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-screenshots
+          name: playwright-screenshots-${{ runner.os }}
           path: screenshots/**
 
   check-display-macos:
@@ -128,5 +129,5 @@ jobs:
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-screenshots
+          name: playwright-screenshots-${{ runner.os }}
           path: screenshots/**
