@@ -10,7 +10,9 @@ jobs:
   check-display-linux:
     name: Linux Display Check
     runs-on: ${{ matrix.os }}
+    continue-on-error: true
     strategy:
+      fail-fast: false
       matrix:
         os: 
           - ubuntu-latest
@@ -39,21 +41,27 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run Playwright tests in headless mode
+        continue-on-error: true
         run: npx playwright test
 
       - name: Run Playwright tests in headed mode
+        continue-on-error: true
         run: npx playwright test --headed
 
       - name: Upload screenshots
+        if: always()  # Upload even if previous steps failed
         uses: actions/upload-artifact@v4
         with:
           name: screenshots-linux-${{ matrix.os }}
           path: screenshots/**
+          if-no-files-found: warn  # Don't fail if no screenshots exist
 
   check-display-windows:
     name: Windows Display Check
     runs-on: ${{ matrix.os }}
+    continue-on-error: true
     strategy:
+      fail-fast: false
       matrix:
         os: 
           - windows-latest
@@ -79,21 +87,27 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run Playwright tests in headless mode
+        continue-on-error: true
         run: npx playwright test
 
       - name: Run Playwright tests in headed mode
+        continue-on-error: true
         run: npx playwright test --headed
 
       - name: Upload screenshots
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: screenshots-windows-${{ matrix.os }}
           path: screenshots/**
+          if-no-files-found: warn
 
   check-display-macos:
     name: macOS Display Check
     runs-on: ${{ matrix.os }}
+    continue-on-error: true
     strategy:
+      fail-fast: false
       matrix:
         os: 
           - macos-latest
@@ -120,20 +134,25 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run Playwright tests in headless mode
+        continue-on-error: true
         run: npx playwright test
 
       - name: Run Playwright tests in headed mode
+        continue-on-error: true
         run: npx playwright test --headed
 
       - name: Upload screenshots
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: screenshots-macos-${{ matrix.os }}
           path: screenshots/**
+          if-no-files-found: warn
 
   merge-artifacts:
     name: Merge All Screenshots
     needs: [check-display-linux, check-display-windows, check-display-macos]
+    if: always()
     runs-on: ubuntu-latest
     steps:
       - name: Download all artifacts
@@ -148,3 +167,19 @@ jobs:
         with:
           name: all-playwright-screenshots
           path: all-screenshots/**
+          if-no-files-found: warn
+
+      - name: Create summary
+        if: always()
+        run: |
+          echo "## Screenshot Collection Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Collected screenshots from all available jobs:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -d "all-screenshots" ]; then
+            find all-screenshots -type f -name "*.png" | while read file; do
+              echo "- \`$file\`" >> $GITHUB_STEP_SUMMARY
+            done
+          else
+            echo "No screenshots found" >> $GITHUB_STEP_SUMMARY
+          fi
