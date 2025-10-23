@@ -47,7 +47,7 @@ jobs:
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-screenshots-${{ runner.os }}
+          name: playwright-screenshots-${{ matrix.os }}
           path: screenshots/**
 
 
@@ -88,7 +88,7 @@ jobs:
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-screenshots-${{ runner.os }}
+          name: playwright-screenshots-${{ matrix.os }}
           path: screenshots/**
 
   check-display-macos:
@@ -129,5 +129,5 @@ jobs:
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-screenshots-${{ runner.os }}
+          name: playwright-screenshots-${{ matrix.os }}
           path: screenshots/**
